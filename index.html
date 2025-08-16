@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0ea5e9" />
+  <title>Control de Gasolina · Pizzería (0→100)</title>
+  <!-- Manifest embebido -->
+  <link rel="manifest" href='data:application/manifest+json,{
+    "name":"Control de Gasolina · Pizzer%C3%ADa",
+    "short_name":"Gasolina",
+    "start_url":"./",
+    "scope":"./",
+    "display":"standalone",
+    "background_color":"#ffffff",
+    "theme_color":"#0ea5e9",
+    "icons":[
+      {"src":"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 256 256%27%3E%3Crect width=%27256%27 height=%27256%27 rx=%2756%27 fill=%230ea5e9/%3E%3Cpath d=%27M96 44h48a20 20 0 0 1 20 20v128a20 20 0 0 1-20 20H96a20 20 0 0 1-20-20V64a20 20 0 0 1 20-20zm-6 44h60v12H90V88zm0 32h60v12H90v-12zm0 32h60v12H90v-12z%27 fill=%27white%27/%3E%3C/svg%3E","sizes":"256x256","type":"image/svg+xml"}
+    ]
+  }' />
+  <style>
+    :root{--bg:#0b1220;--card:#0f172a;--muted:#94a3b8;--text:#e2e8f0;--accent:#0ea5e9;--ok:#16a34a;--warn:#f59e0b;--bad:#ef4444;--ring:#22d3ee}
+    *{box-sizing:border-box} html,body{height:100%}
+    body{margin:0;background:linear-gradient(135deg,#0b1220,#0b1220 40%,#0a0f1a);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif}
+    header{position:sticky;top:0;z-index:5;background:#0b1220cc;backdrop-filter:saturate(140%) blur(8px);border-bottom:1px solid #0b2540}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    h1{font-size:20px;margin:4px 0;display:flex;align-items:center;gap:10px}
+    nav{display:flex;gap:8px;flex-wrap:wrap}
+    nav button{appearance:none;border:1px solid #19324d;background:#0f172a;color:#e2e8f0;padding:8px 12px;border-radius:12px;cursor:pointer}
+    nav button.active{border-color:var(--ring);box-shadow:0 0 0 2px #0ea5e966 inset}
+    .grid{display:grid;gap:16px} @media(min-width:900px){.grid-2{grid-template-columns:1fr 1fr}}
+    .card{background:linear-gradient(180deg,#0f172a,#0b1220 80%);border:1px solid #13233a;border-radius:16px;padding:16px;box-shadow:0 10px 30px #00000044}
+    .muted{color:var(--muted)} label{display:block;font-weight:600;margin-top:8px}
+    input,select,textarea{width:100%;padding:10px;border-radius:12px;border:1px solid #1e2e48;background:#0b1426;color:#e2e8f0}
+    input[type="number"]{appearance:textfield}
+    .row{display:flex;gap:10px;flex-wrap:wrap} .row>*{flex:1}
+    .btn{appearance:none;border:1px solid #19324d;background:#0b1426;color:#e2e8f0;padding:10px 14px;border-radius:12px;cursor:pointer}
+    .btn.primary{background:linear-gradient(180deg,#0ea5e9,#0284c7);border-color:#0284c7;color:white}
+    .btn.ghost{background:#0f172a}
+    .btn.ok{background:linear-gradient(180deg,#16a34a,#15803d);border-color:#14532d}
+    .btn.warn{background:linear-gradient(180deg,#f59e0b,#d97706);border-color:#92400e}
+    .btn.bad{background:linear-gradient(180deg,#ef4444,#dc2626);border-color:#7f1d1d}
+    table{width:100%;border-collapse:collapse;margin-top:8px}
+    th,td{border-bottom:1px dashed #1f2f49;padding:8px;text-align:left}
+    .kpi{display:flex;gap:14px;align-items:center} .kpi .val{font-size:28px;font-weight:800}
+    .chip{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;border:1px solid #1e2e48;background:#0b1426}
+    .chip.ok{border-color:#14532d;background:#052e18}
+    .chip.warn{border-color:#4c2d05;background:#2a1602}
+    .chip.bad{border-color:#57171a;background:#2a0f10}
+    .hero{display:flex;flex-direction:column;gap:10px} .hero h2{margin:4px 0;font-size:24px}
+    .checklist li{margin:6px 0} footer{opacity:.7;font-size:12px;padding:30px 0}
+    .tag{font-size:11px;letter-spacing:.4px;text-transform:uppercase}
+    .pill{padding:3px 8px;border-radius:999px;background:#0b1426;border:1px solid #1b2c47}
+    .notice{border-left:3px solid var(--accent);padding:10px 12px;background:#07101f;border-radius:8px}
+    .small{font-size:12px} .right{float:right}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap row" style="align-items:center;">
+      <h1>🚚⛽️ Control de Gasolina · Pizzería <span class="pill tag">0→100</span></h1>
+      <div class="right row" style="justify-content:flex-end;gap:8px">
+        <button class="btn" id="btnInstall" title="Instalar como app">➕ Instalar</button>
+        <button class="btn" id="btnSW" title="Activar modo offline">📶 Offline</button>
+        <button class="btn ghost" id="btnExport" title="Exportar datos CSV">⬇️ Exportar</button>
+      </div>
+    </div>
+    <div class="wrap" style="padding-top:0"><nav id="tabs"></nav></div>
+  </header>
+
+  <main class="wrap" style="padding-top:16px">
+    <section id="view-home" class="card">
+      <div class="hero">
+        <h2>Bienvenido, gerente 👋</h2>
+        <p class="muted">Esta mini‑app te lleva <strong>de 0 a 100</strong> para controlar el gasto de gasolina sin empeorar el servicio. Funciona con <strong>3 decisiones</strong>: Métrica (L/pedido), Adopción (≥90%) y Servicio (P90 ≤ 35’).</p>
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="kpi"><span class="tag pill">Objetivo 48 h</span> <span class="val" id="kpiObj">−8% L/pedido</span></div>
+            <ul class="checklist">
+              <li>✅ A/B: <em>Control</em> vs <em>Tratamiento</em> (app + bono 50/50).</li>
+              <li>✅ Micro‑repostaje: foto ticket + odómetro al inicio/fin.</li>
+              <li>✅ GPS cada 30 s (15 s en pico 20:00–22:30).</li>
+              <li>✅ Semáforo: Verde = escalar · Ámbar = extender · Rojo = parar.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="kpi"><span class="tag pill">Estado</span> <span class="val" id="kpiState">Preparado</span></div>
+            <p class="muted small">Pulsa <strong>Offline</strong> para registrar el Service Worker (requiere HTTPS o localhost). Pulsa <strong>Instalar</strong> para añadir la app al móvil.</p>
+            <div id="swStatus" class="notice small">Service Worker: <strong>no registrado</strong>.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-onboarding" class="card" hidden>
+      <h2>Guía 0→100 (paso a paso)</h2>
+      <ol class="checklist">
+        <li><strong>Define Riders y Baseline L/pedido</strong>. <button class="btn small" onclick="App.nav('config')">Abrir configuración</button></li>
+        <li><strong>Activa A/B</strong>: Carlos+Ana (Control), Javier+Marta (Tratamiento).</li>
+        <li><strong>SOP micro‑repostaje</strong>: misma gasolinera, caballete, primer “clic”, fotos obligatorias.</li>
+        <li><strong>Registra cada turno</strong> (pedidos, litros, adopción %, P90, €/L). <button class="btn small" onclick="App.nav('registro')">Registrar turno</button></li>
+        <li><strong>Semáforo</strong> decide: Verde = escalar · Ámbar = extender 7 días · Rojo = parar.</li>
+        <li><strong>Paga el bono</strong> 50/50 si adopción ≥ 90% y SLA intacto. <button class="btn small" onclick="App.nav('bono')">Calcular bono</button></li>
+      </ol>
+    </section>
+
+    <section id="view-registro" class="card" hidden>
+      <h2>Registro de turno (micro‑repostaje)</h2>
+      <div class="grid grid-2">
+        <div>
+          <label>Rider</label>
+          <select id="riderSel"></select>
+          <div class="row">
+            <div>
+              <label>Pedidos (nº)</label>
+              <input id="pedidos" type="number" min="1" placeholder="20" />
+            </div>
+            <div>
+              <label>Litros repostados al final</label>
+              <input id="litros" type="number" step="0.001" placeholder="2.40" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label>Adopción ruta (%)</label>
+              <input id="adop" type="number" min="0" max="100" placeholder="90" />
+            </div>
+            <div>
+              <label>P90 ETA (min)</label>
+              <input id="p90" type="number" step="1" placeholder="34" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label>€/L (precio combustible)</label>
+              <input id="eurL" type="number" step="0.001" placeholder="1.75" />
+            </div>
+            <div>
+              <label>Franja</label>
+              <select id="franja">
+                <option value="20-22">20:00–22:00</option>
+                <option value="18-20">18:00–20:00</option>
+                <option value="22-24">22:00–24:00</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn primary" onclick="App.addTurno()">➕ Guardar turno</button>
+            <button class="btn ghost" onclick="App.clearFormRegistro()">Limpiar</button>
+          </div>
+          <p class="muted small">Tip: con micro‑repostaje <em>al final</em> del turno, los litros repostados = litros consumidos.</p>
+        </div>
+        <div>
+          <h3>Turnos guardados</h3>
+          <table id="tblTurnos"><thead><tr><th>Fecha</th><th>Rider</th><th>Franja</th><th>Pedidos</th><th>Litros</th><th>L/pedido</th><th>Adop%</th><th>P90</th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-bono" class="card" hidden>
+      <h2>Cálculo de bono 50/50</h2>
+      <div class="grid grid-2">
+        <div>
+          <label>Rider</label>
+          <select id="riderBonus"></select>
+          <div class="row">
+            <div>
+              <label>Baseline L/pedido</label>
+              <input id="baseL" type="number" step="0.001" placeholder="0.120" />
+            </div>
+            <div>
+              <label>Actual L/pedido</label>
+              <input id="actL" type="number" step="0.001" placeholder="0.105" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label>Pedidos (nº)</label>
+              <input id="pedidosB" type="number" min="1" placeholder="20" />
+            </div>
+            <div>
+              <label>€/L</label>
+              <input id="eurLB" type="number" step="0.001" placeholder="1.75" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label>Adopción ≥ 90% (obligatorio)</label>
+              <select id="adopOK"><option value="si">Sí</option><option value="no">No</option></select>
+            </div>
+            <div>
+              <label>P90 ≤ 35’ (obligatorio)</label>
+              <select id="p90OK"><option value="si">Sí</option><option value="no">No</option></select>
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn ok" onclick="App.calcBono()">💶 Calcular</button>
+            <button class="btn ghost" onclick="App.fillBonoFromUltimo()">Autocompletar con último turno</button>
+          </div>
+          <div id="bonoOut" class="notice small" style="margin-top:10px">Introduce datos y pulsa Calcular.</div>
+        </div>
+        <div>
+          <h3>Recibo (WhatsApp)</h3>
+          <textarea id="waText" rows="9" readonly></textarea>
+          <div class="row">
+            <button class="btn" onclick="App.copyWA()">📋 Copiar</button>
+            <a class="btn" id="waLink" target="_blank">🟢 Abrir WhatsApp</a>
+          </div>
+          <p class="small muted">El bono solo se paga si se cumplen adopción y SLA. Transparencia = confianza.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-config" class="card" hidden>
+      <h2>Configuración (riders, baseline, umbrales)</h2>
+      <div class="grid grid-2">
+        <div>
+          <h3>Riders</h3>
+          <div id="ridersBox"></div>
+          <div class="row"><input id="newRider" placeholder="Nombre rider" /><button class="btn" onclick="App.addRider()">➕ Añadir</button></div>
+        </div>
+        <div>
+          <h3>Umbrales (semáforo)</h3>
+          <div class="row">
+            <div><label>Verde si ΔL ≤ (%)</label><input id="thrGreen" type="number" step="1" value="-12" /></div>
+            <div><label>Ámbar si ΔL entre (%)</label><input id="thrAmber" type="text" value="-8,-12" /></div>
+          </div>
+          <div class="row">
+            <div><label>Adopción mínima (%)</label><input id="thrAdop" type="number" value="90" /></div>
+            <div><label>P90 máximo (min)</label><input id="thrP90" type="number" value="35" /></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-semaforo" class="card" hidden>
+      <h2>Semáforo de decisión</h2>
+      <div class="grid grid-2">
+        <div>
+          <p class="muted">Se evalúa el <strong>último turno</strong> guardado (por rider). Ajusta umbrales en Configuración.</p>
+          <table id="tblSemaf"><thead><tr><th>Rider</th><th>ΔL %</th><th>Adop</th><th>P90</th><th>Estado</th></tr></thead><tbody></tbody></table>
+        </div>
+        <div>
+          <h3>Reglas</h3>
+          <ul class="checklist small">
+            <li><span class="chip ok">Verde</span> ΔL ≤ green, adop ≥ min, P90 ≤ máx → <strong>Escalar</strong>.</li>
+            <li><span class="chip warn">Ámbar</span> ΔL en rango ámbar o adop 75–90% → <strong>Extender 7d</strong>.</li>
+            <li><span class="chip bad">Rojo</span> ΔL > umbral o P90 > máx → <strong>Parar</strong> y revisar causas.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer class="wrap"><div class="muted small">Hecho para gerentes: simple, verificable y accionable. Guardado localmente en tu dispositivo. — v1.1</div></footer>
+  </main>
+
+  <script>
+  const App = (()=>{
+    const LS = {
+      load: (k, d)=>{ try { return JSON.parse(localStorage.getItem(k)) ?? d } catch { return d } },
+      save: (k, v)=> localStorage.setItem(k, JSON.stringify(v))
+    }
+    const state = {
+      riders: LS.load('cg:riders', [
+        {name:'Carlos', baseline:0.120},
+        {name:'Ana', baseline:0.120},
+        {name:'Javier', baseline:0.120},
+        {name:'Marta', baseline:0.120},
+      ]),
+      turnos: LS.load('cg:turnos', []),
+      thr: LS.load('cg:thr', {green:-12, amber:[-8,-12], adop:90, p90:35}),
+      deferredPrompt: null,
+      swOk: false
+    }
+
+    const $$ = sel => document.querySelector(sel)
+    const $id = id => document.getElementById(id)
+    const $ = s=>document.querySelector(s)
+
+    function nav(view){
+      const views = ['home','onboarding','registro','bono','config','semaforo']
+      views.forEach(v=> $(`#view-${v}`).hidden = (v!==view))
+      document.querySelectorAll('nav button').forEach(b=> b.classList.toggle('active', b.dataset.view===view))
+    }
+
+    function initTabs(){
+      const items = [
+        ['home','Inicio'],['onboarding','Guía 0→100'],['registro','Registro'],['bono','Bono 50/50'],['config','Config'],['semaforo','Semáforo']
+      ]
+      const navEl = $id('tabs'); navEl.innerHTML = ''
+      items.forEach(([v,label])=>{
+        const b = document.createElement('button')
+        b.textContent = label; b.dataset.view = v; b.onclick = ()=> nav(v)
+        if(v==='home') b.classList.add('active')
+        navEl.appendChild(b)
+      })
+    }
+
+    function renderRiders(){
+      const box = $id('ridersBox'); box.innerHTML = ''
+      state.riders.forEach((r,i)=>{
+        const row = document.createElement('div'); row.className='row'; row.style.alignItems='center'
+        row.innerHTML = `<input data-i="${i}" class="rname" value="${r.name}"> <input data-i="${i}" class="rbase" type="number" step="0.001" value="${r.baseline.toFixed(3)}"> <button class=btn data-i=${i}>🗑️</button>`
+        row.querySelector('button').onclick = ()=>{ state.riders.splice(i,1); LS.save('cg:riders',state.riders); renderRiders(); fillRiderSelects() }
+        box.appendChild(row)
+      })
+      box.querySelectorAll('.rname').forEach(inp=> inp.onchange = (e)=>{ const i=+e.target.dataset.i; state.riders[i].name=e.target.value; LS.save('cg:riders',state.riders); fillRiderSelects() })
+      box.querySelectorAll('.rbase').forEach(inp=> inp.onchange = (e)=>{ const i=+e.target.dataset.i; state.riders[i].baseline=parseFloat(e.target.value||'0.12'); LS.save('cg:riders',state.riders) })
+    }
+
+    function addRider(){
+      const n = $id('newRider').value.trim(); if(!n) return
+      state.riders.push({name:n, baseline:0.120}); LS.save('cg:riders',state.riders)
+      $id('newRider').value=''; renderRiders(); fillRiderSelects()
+    }
+
+    function fillRiderSelects(){
+      const opts = state.riders.map(r=>`<option>${r.name}</option>`).join('')
+      $id('riderSel').innerHTML = opts
+      $id('riderBonus').innerHTML = opts
+    }
+
+    function addTurno(){
+      const rider = $id('riderSel').value
+      const pedidos = +($id('pedidos').value||0)
+      const litros = +($id('litros').value||0)
+      const adop = +($id('adop').value||0)
+      const p90 = +($id('p90').value||0)
+      const eurL = +($id('eurL').value||0)
+      const franja = $id('franja').value
+      if(!rider||!pedidos||!litros){ alert('Rider, pedidos y litros son obligatorios'); return }
+      const lp = litros/pedidos
+      const base = state.riders.find(r=>r.name===rider)?.baseline ?? 0.12
+      const deltaPct = ((lp-base)/base)*100
+      const rec = {ts:Date.now(), rider, pedidos, litros, lp:+lp.toFixed(3), base, deltaPct:+deltaPct.toFixed(1), adop, p90, eurL, franja}
+      state.turnos.push(rec); LS.save('cg:turnos', state.turnos)
+      renderTurnos(); renderSemaforo();
+      // pre-rellenar bono
+      $id('riderBonus').value = rider
+      $id('baseL').value = base.toFixed(3)
+      $id('actL').value = lp.toFixed(3)
+      $id('pedidosB').value = pedidos
+      if(eurL) $id('eurLB').value = eurL
+      $id('adopOK').value = adop>=state.thr.adop?'si':'no'
+      $id('p90OK').value = p90<=state.thr.p90?'si':'no'
+      nav('bono')
+    }
+
+    function clearFormRegistro(){['pedidos','litros','adop','p90','eurL'].forEach(id=> $id(id).value='')}
+
+    function renderTurnos(){
+      const tb = $id('tblTurnos').querySelector('tbody'); tb.innerHTML = ''
+      [...state.turnos].reverse().slice(0,20).forEach(t=>{
+        const tr = document.createElement('tr')
+        const d = new Date(t.ts).toLocaleString()
+        tr.innerHTML = `<td>${d}</td><td>${t.rider}</td><td>${t.franja}</td><td>${t.pedidos}</td><td>${t.litros.toFixed(3)}</td><td>${t.lp.toFixed(3)}</td><td>${t.adop||0}%</td><td>${t.p90||'-'}</td>`
+        tb.appendChild(tr)
+      })
+    }
+
+    function calcBono(){
+      const rider = $id('riderBonus').value
+      const base = +($id('baseL').value||0)
+      const act = +($id('actL').value||0)
+      const pedidos = +($id('pedidosB').value||0)
+      const eurL = +($id('eurLB').value||0)
+      const okAdop = $id('adopOK').value==='si'
+      const okP90 = $id('p90OK').value==='si'
+      if(!base||!act||!pedidos){ alert('Faltan datos'); return }
+      const baseLitros = base*pedidos
+      const actLitros = act*pedidos
+      const ahorroL = Math.max(0, baseLitros - actLitros)
+      const ahorro€ = eurL? ahorroL*eurL : 0
+      const bono = (okAdop && okP90) ? (ahorro€*0.5) : 0
+      const deltaPct = ((act-base)/base)*100
+      const msg = `Rider: ${rider}\nPedidos: ${pedidos}\nBaseline L/pedido: ${base.toFixed(3)}\nActual L/pedido: ${act.toFixed(3)} (Δ ${deltaPct.toFixed(1)}%)\nLitros ahorrados: ${ahorroL.toFixed(3)} L\nPrecio: ${eurL?eurL.toFixed(2):'—'} €/L\n\nBono 50/50: ${bono.toFixed(2)} € ${!okAdop||!okP90?'(no cumple condiciones)':''}`
+      $id('bonoOut').innerText = msg
+      const wa = `Recibo bono gasolina%0A%0ARider: ${encodeURIComponent(rider)}%0APedidos: ${pedidos}%0ABaseline L/pedido: ${base.toFixed(3)}%0AActual L/pedido: ${act.toFixed(3)}%20(Δ%20${deltaPct.toFixed(1)}%25)%0ALitros ahorrados: ${ahorroL.toFixed(3)}%20L%0APrecio: ${eurL?eurL.toFixed(2):'—'}%20€/L%0A%0ABono%2050/50:%20${bono.toFixed(2)}%20€%20${!okAdop||!okP90?'(no%20aplica:%20adopci%C3%B3n%20y%2Fo%20SLA%20no%20cumplidos)':''}`
+      $id('waText').value = decodeURIComponent(wa)
+      $id('waLink').href = `https://wa.me/?text=${wa}`
+    }
+
+    function fillBonoFromUltimo(){
+      const rider = $id('riderBonus').value
+      const last = [...state.turnos].reverse().find(t=>t.rider===rider)
+      if(!last){ alert('No hay turnos del rider'); return }
+      $id('baseL').value = last.base.toFixed(3)
+      $id('actL').value = last.lp.toFixed(3)
+      $id('pedidosB').value = last.pedidos
+      if(last.eurL) $id('eurLB').value = last.eurL
+      $id('adopOK').value = (last.adop||0) >= state.thr.adop ? 'si' : 'no'
+      $id('p90OK').value = (last.p90||99) <= state.thr.p90 ? 'si' : 'no'
+      calcBono()
+    }
+
+    function renderSemaforo(){
+      const tb = $id('tblSemaf').querySelector('tbody'); tb.innerHTML=''
+      const latestBy = {}
+      state.turnos.forEach(t=> latestBy[t.rider] = t)
+      Object.values(latestBy).forEach(t=>{
+        const st = evalSem(t)
+        const tr = document.createElement('tr')
+        tr.innerHTML = `<td>${t.rider}</td><td>${t.deltaPct.toFixed(1)}%</td><td>${t.adop||0}%</td><td>${t.p90||'-'}</td><td>${badge(st)}</td>`
+        tb.appendChild(tr)
+      })
+    }
+
+    function evalSem(t){
+      const g = state.thr.green
+      const [a1,a2] = state.thr.amber
+      const okA = (t.adop||0) >= state.thr.adop
+      const okP = (t.p90||99) <= state.thr.p90
+      if(t.deltaPct <= g && okA && okP) return 'verde'
+      if((t.deltaPct <= Math.min(a1,a2) && t.deltaPct >= Math.max(a1,a2)) || (t.adop>=75 && t.adop<state.thr.adop)) return 'ambar'
+      return 'rojo'
+    }
+
+    function badge(st){
+      const m = {verde:['Verde','ok'], ambar:['Ámbar','warn'], rojo:['Rojo','bad']}
+      const [txt,cl] = m[st]||['—','']
+      return `<span class="chip ${cl}">● ${txt}</span>`
+    }
+
+    function exportCSV(){
+      const rows = [['fecha','rider','franja','pedidos','litros','l_por_pedido','baseline','delta_pct','adop','p90','eurL']]
+      state.turnos.forEach(t=> rows.push([
+        new Date(t.ts).toISOString(), t.rider, t.franja, t.pedidos, t.litros, t.lp, t.base, t.deltaPct, t.adop, t.p90, t.eurL
+      ]))
+      const csv = rows.map(r=> r.map(v=> (v==null?'':String(v)).replaceAll('"','""')).map(v=>`"${v}"`).join(',')).join('\n')
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='turnos_gasolina.csv'; a.click()
+    }
+
+    function saveThr(){
+      state.thr = { green: +$id('thrGreen').value, amber: $id('thrAmber').value.split(',').map(Number), adop:+$id('thrAdop').value, p90:+$id('thrP90').value }
+      LS.save('cg:thr', state.thr); renderSemaforo()
+    }
+
+    // --- Instalación como app ---
+    function setupInstall(){
+      window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); state.deferredPrompt = e; $id('btnInstall').disabled=false })
+      $id('btnInstall').onclick = async ()=>{
+        if(state.deferredPrompt){ state.deferredPrompt.prompt(); const {outcome}=await state.deferredPrompt.userChoice; state.deferredPrompt=null; $id('btnInstall').textContent = outcome==='accepted'?'✅ Instalada':'➕ Instalar' }
+        else { alert('En el navegador, abre el menú y pulsa “Instalar app”.') }
+      }
+    }
+
+    // --- Service Worker (sw.js externo) ---
+    async function registerSW(){
+      if(!('serviceWorker' in navigator)){ alert('Navegador sin soporte de Service Workers'); return }
+      try{
+        const reg = await navigator.serviceWorker.register('./sw.js', {scope:'./'})
+        $id('swStatus').innerHTML = 'Service Worker: <strong>registrado</strong> (modo offline activo).'
+      }catch(err){
+        console.error(err)
+        $id('swStatus').innerHTML = 'Service Worker: <strong>error al registrar</strong>. Asegúrate de servir por HTTPS o localhost.'
+      }
+    }
+
+    function copyWA(){
+      const t = $id('waText').value; if(!t){alert('Nada que copiar'); return}
+      navigator.clipboard?.writeText(t).then(()=> alert('Copiado'))
+    }
+
+    function hook(){
+      $id('thrGreen').onchange = saveThr; $id('thrAmber').onchange = saveThr; $id('thrAdop').onchange=saveThr; $id('thrP90').onchange=saveThr
+      $id('btnExport').onclick = exportCSV
+      $id('btnSW').onclick = registerSW
+    }
+
+    function start(){
+      initTabs(); renderRiders(); fillRiderSelects(); renderTurnos(); renderSemaforo(); hook(); setupInstall()
+      nav('home')
+    }
+
+    return {start, nav, addRider, addTurno, clearFormRegistro, calcBono, fillBonoFromUltimo, copyWA}
+  })()
+
+  window.App = App; window.addEventListener('DOMContentLoaded', App.start)
+  </script>
+</body>
+</html>
