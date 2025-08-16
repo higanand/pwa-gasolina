@@ -5,21 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#0ea5e9" />
   <title>Control de Gasolina · Pizzería (0→100)</title>
-  <!-- Manifest embebido -->
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="apple-touch-icon" href="/icon-192.png">
-  <!-- removed inline manifest: {
-    "name":"Control de Gasolina · Pizzer%C3%ADa",
-    "short_name":"Gasolina",
-    "start_url":"./",
-    "scope":"./",
-    "display":"standalone",
-    "background_color":"#ffffff",
-    "theme_color":"#0ea5e9",
-    "icons":[
-      {"src":"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 256 256%27%3E%3Crect width=%27256%27 height=%27256%27 rx=%2756%27 fill=%230ea5e9/%3E%3Cpath d=%27M96 44h48a20 20 0 0 1 20 20v128a20 20 0 0 1-20 20H96a20 20 0 0 1-20-20V64a20 20 0 0 1 20-20zm-6 44h60v12H90V88zm0 32h60v12H90v-12zm0 32h60v12H90v-12z%27 fill=%27white%27/%3E%3C/svg%3E","sizes":"256x256","type":"image/svg+xml"}
-    ]
-  }' />
   <style>
     :root{--bg:#0b1220;--card:#0f172a;--muted:#94a3b8;--text:#e2e8f0;--accent:#0ea5e9;--ok:#16a34a;--warn:#f59e0b;--bad:#ef4444;--ring:#22d3ee}
     *{box-sizing:border-box} html,body{height:100%}
@@ -74,13 +61,13 @@
     <section id="view-home" class="card">
       <div class="hero">
         <h2>Bienvenido, gerente 👋</h2>
-        <p class="muted">Esta mini‑app te lleva <strong>de 0 a 100</strong> para controlar el gasto de gasolina sin empeorar el servicio. Funciona con <strong>3 decisiones</strong>: Métrica (L/pedido), Adopción (≥90%) y Servicio (P90 ≤ 35’).</p>
+        <p class="muted">Esta mini-app te lleva <strong>de 0 a 100</strong> para controlar el gasto de gasolina sin empeorar el servicio. Funciona con <strong>3 decisiones</strong>: Métrica (L/pedido), Adopción (≥90%) y Servicio (P90 ≤ 35’).</p>
         <div class="grid grid-2">
           <div class="card">
             <div class="kpi"><span class="tag pill">Objetivo 48 h</span> <span class="val" id="kpiObj">−8% L/pedido</span></div>
             <ul class="checklist">
               <li>✅ A/B: <em>Control</em> vs <em>Tratamiento</em> (app + bono 50/50).</li>
-              <li>✅ Micro‑repostaje: foto ticket + odómetro al inicio/fin.</li>
+              <li>✅ Micro-repostaje: foto ticket + odómetro al inicio/fin.</li>
               <li>✅ GPS cada 30 s (15 s en pico 20:00–22:30).</li>
               <li>✅ Semáforo: Verde = escalar · Ámbar = extender · Rojo = parar.</li>
             </ul>
@@ -99,7 +86,7 @@
       <ol class="checklist">
         <li><strong>Define Riders y Baseline L/pedido</strong>. <button class="btn small" onclick="App.nav('config')">Abrir configuración</button></li>
         <li><strong>Activa A/B</strong>: Carlos+Ana (Control), Javier+Marta (Tratamiento).</li>
-        <li><strong>SOP micro‑repostaje</strong>: misma gasolinera, caballete, primer “clic”, fotos obligatorias.</li>
+        <li><strong>SOP micro-repostaje</strong>: misma gasolinera, caballete, primer “clic”, fotos obligatorias.</li>
         <li><strong>Registra cada turno</strong> (pedidos, litros, adopción %, P90, €/L). <button class="btn small" onclick="App.nav('registro')">Registrar turno</button></li>
         <li><strong>Semáforo</strong> decide: Verde = escalar · Ámbar = extender 7 días · Rojo = parar.</li>
         <li><strong>Paga el bono</strong> 50/50 si adopción ≥ 90% y SLA intacto. <button class="btn small" onclick="App.nav('bono')">Calcular bono</button></li>
@@ -107,7 +94,7 @@
     </section>
 
     <section id="view-registro" class="card" hidden>
-      <h2>Registro de turno (micro‑repostaje)</h2>
+      <h2>Registro de turno (micro-repostaje)</h2>
       <div class="grid grid-2">
         <div>
           <label>Rider</label>
@@ -150,7 +137,7 @@
             <button class="btn primary" onclick="App.addTurno()">➕ Guardar turno</button>
             <button class="btn ghost" onclick="App.clearFormRegistro()">Limpiar</button>
           </div>
-          <p class="muted small">Tip: con micro‑repostaje <em>al final</em> del turno, los litros repostados = litros consumidos.</p>
+          <p class="muted small">Tip: con micro-repostaje <em>al final</em> del turno, los litros repostados = litros consumidos.</p>
         </div>
         <div>
           <h3>Turnos guardados</h3>
@@ -253,7 +240,7 @@
       </div>
     </section>
 
-    <footer class="wrap"><div class="muted small">Hecho para gerentes: simple, verificable y accionable. Guardado localmente en tu dispositivo. — v1.1</div></footer>
+    <footer class="wrap"><div class="muted small">Hecho para gerentes: simple, verificable y accionable. Guardado localmente en tu dispositivo. — v1.2</div></footer>
   </main>
 
   <script>
@@ -271,11 +258,9 @@
       ]),
       turnos: LS.load('cg:turnos', []),
       thr: LS.load('cg:thr', {green:-12, amber:[-8,-12], adop:90, p90:35}),
-      deferredPrompt: null,
-      swOk: false
+      deferredPrompt: null
     }
 
-    const $$ = sel => document.querySelector(sel)
     const $id = id => document.getElementById(id)
     const $ = s=>document.querySelector(s)
 
@@ -337,7 +322,6 @@
       const rec = {ts:Date.now(), rider, pedidos, litros, lp:+lp.toFixed(3), base, deltaPct:+deltaPct.toFixed(1), adop, p90, eurL, franja}
       state.turnos.push(rec); LS.save('cg:turnos', state.turnos)
       renderTurnos(); renderSemaforo();
-      // pre-rellenar bono
       $id('riderBonus').value = rider
       $id('baseL').value = base.toFixed(3)
       $id('actL').value = lp.toFixed(3)
@@ -352,7 +336,7 @@
 
     function renderTurnos(){
       const tb = $id('tblTurnos').querySelector('tbody'); tb.innerHTML = ''
-      [...state.turnos].reverse().slice(0,20).forEach(t=>{
+      ;[...state.turnos].reverse().slice(0,20).forEach(t=>{
         const tr = document.createElement('tr')
         const d = new Date(t.ts).toLocaleString()
         tr.innerHTML = `<td>${d}</td><td>${t.rider}</td><td>${t.franja}</td><td>${t.pedidos}</td><td>${t.litros.toFixed(3)}</td><td>${t.lp.toFixed(3)}</td><td>${t.adop||0}%</td><td>${t.p90||'-'}</td>`
@@ -372,31 +356,38 @@
       const baseLitros = base*pedidos
       const actLitros = act*pedidos
       const ahorroL = Math.max(0, baseLitros - actLitros)
-      const ahorro€ = eurL? ahorroL*eurL : 0
-      const bono = (okAdop && okP90) ? (ahorro€*0.5) : 0
+      const ahorroE = eurL? ahorroL*eurL : 0
+      const bono = (okAdop && okP90) ? (ahorroE*0.5) : 0
       const deltaPct = ((act-base)/base)*100
-      const msg = `Rider: ${rider}\nPedidos: ${pedidos}\nBaseline L/pedido: ${base.toFixed(3)}\nActual L/pedido: ${act.toFixed(3)} (Δ ${deltaPct.toFixed(1)}%)\nLitros ahorrados: ${ahorroL.toFixed(3)} L\nPrecio: ${eurL?eurL.toFixed(2):'—'} €/L\n\nBono 50/50: ${bono.toFixed(2)} € ${!okAdop||!okP90?'(no cumple condiciones)':''}`
-      $id('bonoOut').innerText = msg
+      const msg = `Rider: ${rider}
+Pedidos: ${pedidos}
+Baseline L/pedido: ${base.toFixed(3)}
+Actual L/pedido: ${act.toFixed(3)} (Δ ${deltaPct.toFixed(1)}%)
+Litros ahorrados: ${ahorroL.toFixed(3)} L
+Precio: ${eurL?eurL.toFixed(2):'—'} €/L
+
+Bono 50/50: ${bono.toFixed(2)} € ${!okAdop||!okP90?'(no cumple condiciones)':''}`
+      document.getElementById('bonoOut').innerText = msg
       const wa = `Recibo bono gasolina%0A%0ARider: ${encodeURIComponent(rider)}%0APedidos: ${pedidos}%0ABaseline L/pedido: ${base.toFixed(3)}%0AActual L/pedido: ${act.toFixed(3)}%20(Δ%20${deltaPct.toFixed(1)}%25)%0ALitros ahorrados: ${ahorroL.toFixed(3)}%20L%0APrecio: ${eurL?eurL.toFixed(2):'—'}%20€/L%0A%0ABono%2050/50:%20${bono.toFixed(2)}%20€%20${!okAdop||!okP90?'(no%20aplica:%20adopci%C3%B3n%20y%2Fo%20SLA%20no%20cumplidos)':''}`
-      $id('waText').value = decodeURIComponent(wa)
-      $id('waLink').href = `https://wa.me/?text=${wa}`
+      document.getElementById('waText').value = decodeURIComponent(wa)
+      document.getElementById('waLink').href = `https://wa.me/?text=${wa}`
     }
 
     function fillBonoFromUltimo(){
-      const rider = $id('riderBonus').value
+      const rider = document.getElementById('riderBonus').value
       const last = [...state.turnos].reverse().find(t=>t.rider===rider)
       if(!last){ alert('No hay turnos del rider'); return }
-      $id('baseL').value = last.base.toFixed(3)
-      $id('actL').value = last.lp.toFixed(3)
-      $id('pedidosB').value = last.pedidos
-      if(last.eurL) $id('eurLB').value = last.eurL
-      $id('adopOK').value = (last.adop||0) >= state.thr.adop ? 'si' : 'no'
-      $id('p90OK').value = (last.p90||99) <= state.thr.p90 ? 'si' : 'no'
+      document.getElementById('baseL').value = last.base.toFixed(3)
+      document.getElementById('actL').value = last.lp.toFixed(3)
+      document.getElementById('pedidosB').value = last.pedidos
+      if(last.eurL) document.getElementById('eurLB').value = last.eurL
+      document.getElementById('adopOK').value = (last.adop||0) >= state.thr.adop ? 'si' : 'no'
+      document.getElementById('p90OK').value = (last.p90||99) <= state.thr.p90 ? 'si' : 'no'
       calcBono()
     }
 
     function renderSemaforo(){
-      const tb = $id('tblSemaf').querySelector('tbody'); tb.innerHTML=''
+      const tb = document.getElementById('tblSemaf').querySelector('tbody'); tb.innerHTML=''
       const latestBy = {}
       state.turnos.forEach(t=> latestBy[t.rider] = t)
       Object.values(latestBy).forEach(t=>{
@@ -433,40 +424,38 @@
     }
 
     function saveThr(){
-      state.thr = { green: +$id('thrGreen').value, amber: $id('thrAmber').value.split(',').map(Number), adop:+$id('thrAdop').value, p90:+$id('thrP90').value }
+      state.thr = { green: +document.getElementById('thrGreen').value, amber: document.getElementById('thrAmber').value.split(',').map(Number), adop:+document.getElementById('thrAdop').value, p90:+document.getElementById('thrP90').value }
       LS.save('cg:thr', state.thr); renderSemaforo()
     }
 
-    // --- Instalación como app ---
     function setupInstall(){
-      window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); state.deferredPrompt = e; $id('btnInstall').disabled=false })
-      $id('btnInstall').onclick = async ()=>{
-        if(state.deferredPrompt){ state.deferredPrompt.prompt(); const {outcome}=await state.deferredPrompt.userChoice; state.deferredPrompt=null; $id('btnInstall').textContent = outcome==='accepted'?'✅ Instalada':'➕ Instalar' }
+      window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); state.deferredPrompt = e; document.getElementById('btnInstall').disabled=false })
+      document.getElementById('btnInstall').onclick = async ()=>{
+        if(state.deferredPrompt){ state.deferredPrompt.prompt(); const {outcome}=await state.deferredPrompt.userChoice; state.deferredPrompt=null; document.getElementById('btnInstall').textContent = outcome==='accepted'?'✅ Instalada':'➕ Instalar' }
         else { alert('En el navegador, abre el menú y pulsa “Instalar app”.') }
       }
     }
 
-    // --- Service Worker (sw.js externo) ---
     async function registerSW(){
       if(!('serviceWorker' in navigator)){ alert('Navegador sin soporte de Service Workers'); return }
       try{
-        const reg = await navigator.serviceWorker.register('/sw.js', {scope:'./'})
-        $id('swStatus').innerHTML = 'Service Worker: <strong>registrado</strong> (modo offline activo).'
+        await navigator.serviceWorker.register('/sw.js', {scope:'/'})
+        document.getElementById('swStatus').innerHTML = 'Service Worker: <strong>registrado</strong> (modo offline activo).'
       }catch(err){
         console.error(err)
-        $id('swStatus').innerHTML = 'Service Worker: <strong>error al registrar</strong>. Asegúrate de servir por HTTPS o localhost.'
+        document.getElementById('swStatus').innerHTML = 'Service Worker: <strong>error al registrar</strong>. Asegúrate de servir por HTTPS o localhost.'
       }
     }
 
     function copyWA(){
-      const t = $id('waText').value; if(!t){alert('Nada que copiar'); return}
+      const t = document.getElementById('waText').value; if(!t){alert('Nada que copiar'); return}
       navigator.clipboard?.writeText(t).then(()=> alert('Copiado'))
     }
 
     function hook(){
-      $id('thrGreen').onchange = saveThr; $id('thrAmber').onchange = saveThr; $id('thrAdop').onchange=saveThr; $id('thrP90').onchange=saveThr
-      $id('btnExport').onclick = exportCSV
-      $id('btnSW').onclick = registerSW
+      document.getElementById('thrGreen').onchange = saveThr; document.getElementById('thrAmber').onchange = saveThr; document.getElementById('thrAdop').onchange=saveThr; document.getElementById('thrP90').onchange=saveThr
+      document.getElementById('btnExport').onclick = exportCSV
+      document.getElementById('btnSW').onclick = registerSW
     }
 
     function start(){
