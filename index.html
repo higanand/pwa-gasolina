@@ -6,7 +6,9 @@
   <meta name="theme-color" content="#0ea5e9" />
   <title>Control de Gasolina · Pizzería (0→100)</title>
   <!-- Manifest embebido -->
-  <link rel="manifest" href='data:application/manifest+json,{
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+  <!-- removed inline manifest: {
     "name":"Control de Gasolina · Pizzer%C3%ADa",
     "short_name":"Gasolina",
     "start_url":"./",
@@ -448,7 +450,7 @@
     async function registerSW(){
       if(!('serviceWorker' in navigator)){ alert('Navegador sin soporte de Service Workers'); return }
       try{
-        const reg = await navigator.serviceWorker.register('./sw.js', {scope:'./'})
+        const reg = await navigator.serviceWorker.register('/sw.js', {scope:'./'})
         $id('swStatus').innerHTML = 'Service Worker: <strong>registrado</strong> (modo offline activo).'
       }catch(err){
         console.error(err)
